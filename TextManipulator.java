@@ -115,7 +115,7 @@ public class TextManipulator {
 
 
     //
-    // Removes HTML tags from the given string, leaving only the plain text content.
+    // Removes HTML tags from the given string
     //
     private String doRemoveHtml(String txt)
     {
@@ -127,13 +127,15 @@ public class TextManipulator {
 
 
     //---------------------------------------------------------------------------------------------------------------------
-    // windows form events
+    // window and component form events
     //---------------------------------------------------------------------------------------------------------------------
     
     private void btnCsvToHtmlClicked() {
         txtEditor.setText(doCsvToHtml(txtEditor.getText()));
     }
     
+
+
     private void btnRemoveHtmlClicked() {
         String ret = doRemoveHtml(txtEditor.getText());
         ret = ret.replaceAll("  ", " ");        //clean up double spaces resulting from removed HTML tags
