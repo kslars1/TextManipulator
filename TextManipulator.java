@@ -23,7 +23,7 @@ public class TextManipulator {
 
 
     //---------------------------------------------------------------------------------------------------------------------
-    // main entry point and component initialization
+    // main entry point, constructors and component initialization
     //---------------------------------------------------------------------------------------------------------------------
     
     //
@@ -32,9 +32,15 @@ public class TextManipulator {
     public static void main(String[] args) {
         //init this class
         TextManipulator tm = new TextManipulator();
+        tm.frame.setVisible(true);
+    }
 
-        //initialize GUI components
-        tm.initializeComponents();
+
+    //
+    // constructor
+    //
+    public TextManipulator() {
+        initializeComponents();
     }
 
 
@@ -67,17 +73,24 @@ public class TextManipulator {
         frame.add(txtEditor);
 
         //BUTTON: CSV to HTML table
-        btnCsvToHtml = new JButton("CSV to HTML");
-        btnCsvToHtml.addActionListener(e -> btnCsvToHtmlClicked());
+        btnCsvToHtml = new JButton("Remove HTML");
+        btnCsvToHtml.addActionListener(e -> btnRemoveHtmlClicked());
         btnCsvToHtml.setSize(buttonWidth, buttonHeight);
         btnCsvToHtml.setLocation(frame.getWidth() - buttonWidth - frameMargin, frameMargin);
         frame.add(btnCsvToHtml);
 
         //BUTTON: remove HTML
-        btnRemoveHtml = new JButton("Remove HTML");
-        btnRemoveHtml.addActionListener(e -> btnRemoveHtmlClicked());
+        btnRemoveHtml = new JButton("CSV to HTML");
+        btnRemoveHtml.addActionListener(e -> btnCsvToHtmlClicked());
         btnRemoveHtml.setSize(buttonWidth, buttonHeight);
         btnRemoveHtml.setLocation(frame.getWidth() - buttonWidth - frameMargin, frameMargin + 1 * (buttonHeight + 4));
+        frame.add(btnRemoveHtml);
+
+        //BUTTON: remove HTML
+        btnRemoveHtml = new JButton("Tab to HTML");
+        btnRemoveHtml.addActionListener(e -> btnTabToHtmlClicked());
+        btnRemoveHtml.setSize(buttonWidth, buttonHeight);
+        btnRemoveHtml.setLocation(frame.getWidth() - buttonWidth - frameMargin, frameMargin + 2 * (buttonHeight + 4));
         frame.add(btnRemoveHtml);
 
         //finalize frame setup
@@ -93,9 +106,21 @@ public class TextManipulator {
     //---------------------------------------------------------------------------------------------------------------------
 
     //
+    // removes double spaces after removals
+    //
+    private String normalizeSpacing(String txt)
+    {
+        String ret = removeHtml(txtEditor.getText());
+        ret = ret.replaceAll("  ", " ");  
+        return ret;
+    }
+    
+    
+    
+    //
     // Converts a CSV formatted string into an HTML table representation. Each row in the CSV becomes a table row, and each comma-separated value becomes a table cell.
     // 
-    private String doCsvToHtml(String txt)
+    private String csvToHtml(String txt)
     {
         StringBuilder html = new StringBuilder();
         html.append("<table>\n");
@@ -115,12 +140,31 @@ public class TextManipulator {
 
 
     //
+    // removes double spaces after removals
+    //
+    private String tabToHtml(String txt)
+    {
+        String ret = removeHtml(txtEditor.getText());
+        ret = ret.replaceAll("\t", ",");
+        ret = csvToHtml(ret);
+        return ret;
+    }
+    
+    
+    
+    //
     // Removes HTML tags from the given string
     //
-    private String doRemoveHtml(String txt)
+    private String removeHtml(String txt)
     {
         return txt.replaceAll("<[^>]*>", "");
     }
+
+
+
+    //
+    //
+    //
 
 
 
@@ -130,15 +174,23 @@ public class TextManipulator {
     // window and component form events
     //---------------------------------------------------------------------------------------------------------------------
     
+    private void btnRemoveHtmlClicked() {
+        String ret = removeHtml(txtEditor.getText());
+        ret = normalizeSpacing(ret);
+        txtEditor.setText(ret);
+    }
+
+
+    
     private void btnCsvToHtmlClicked() {
-        txtEditor.setText(doCsvToHtml(txtEditor.getText()));
+        txtEditor.setText(csvToHtml(txtEditor.getText()));
     }
     
 
 
-    private void btnRemoveHtmlClicked() {
-        String ret = doRemoveHtml(txtEditor.getText());
-        ret = ret.replaceAll("  ", " ");        //clean up double spaces resulting from removed HTML tags
-        txtEditor.setText(ret);
+    private void btnTabToHtmlClicked() {
+        txtEditor.setText(tabToHtml(txtEditor.getText()));
     }
+
+    
 }
